@@ -158,6 +158,13 @@ av_get <- function(symbol, av_fun, ...) {
             content <- content_list %>%
                 purrr::flatten_dfc() %>%
                 purrr::map_dfc(readr::parse_guess)
+                } else if (av_fun %in% c("INCOME_STATEMENT", "BALANCE_SHEET", "CASH_FLOW", "EARNINGS")) {
+
+        content <- content_list[-1] %>% 
+            purrr::map_dfr(tibble::as_tibble) %>%
+            tibble::add_column(period = rep(names(content_list[-1]), as.vector(purrr::map_dfr(content_list[-1], nrow))), .before = 1) %>% 
+            tibble::add_column(symbol = content_list[[1]], .before = 1)
+            
         } else {
             # Bad Call
 
